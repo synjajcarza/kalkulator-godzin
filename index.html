@@ -13,7 +13,6 @@
     --panel: #ffffff;
     --yellow: #ffcc00;
     --red: #d40511;
-    --green: #1b7a45;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -36,12 +35,8 @@
     border-bottom: 6px solid var(--yellow);
   }
   .summary .label { font-size: 13px; color: #b8c2d4; }
-  .summary .total { font-size: 44px; font-weight: 700; letter-spacing: -0.02em; margin: 2px 0 8px; }
-  .summary .lines { font-size: 14px; color: #d8dfeb; }
-  .summary .lines div { display: flex; justify-content: space-between; padding: 3px 0; border-top: 1px solid #2c3852; }
-  .summary .lines div:first-child { border-top: 0; }
-  .summary .lines b { color: #fff; }
-  .summary .lines .net b { color: var(--yellow); font-size: 16px; }
+  .summary .total { font-size: 44px; font-weight: 700; letter-spacing: -0.02em; margin: 2px 0 6px; }
+  .summary .sub { font-size: 14px; color: #d8dfeb; display: flex; gap: 18px; flex-wrap: wrap; }
 
   h2 { font-size: 16px; margin: 0 0 10px; }
 
@@ -57,7 +52,7 @@
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .grid .wide { grid-column: 1 / -1; }
   label { display: block; font-size: 13px; color: var(--muted); }
-  input, select {
+  input {
     width: 100%;
     margin-top: 4px;
     padding: 10px;
@@ -68,11 +63,11 @@
     border: 1px solid var(--line);
     border-radius: 8px;
   }
-  input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible {
+  input:focus-visible, button:focus-visible, summary:focus-visible {
     outline: 3px solid var(--yellow);
     outline-offset: 1px;
   }
-  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
   button {
     font: inherit;
     font-weight: 600;
@@ -89,35 +84,13 @@
   .preview { margin-top: 10px; font-size: 14px; color: var(--muted); min-height: 20px; }
   .preview strong { color: var(--ink); }
 
-  /* Breaks */
-  .breaks-title { font-size: 13px; color: var(--muted); margin: 14px 0 4px; }
-  .break-row { display: grid; grid-template-columns: 1fr 1fr 42px; gap: 8px; align-items: end; margin-bottom: 6px; }
-  .break-row button { padding: 10px 0; height: 44px; margin-top: 4px; }
-  .hint { font-size: 12.5px; color: var(--muted); margin: 6px 0 0; }
-
-  /* Weekly report */
-  .week { margin-top: 22px; }
-  .report {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-top: 5px solid var(--yellow);
-    border-radius: 12px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
+  /* Weeks + entries */
+  .week { margin-top: 20px; }
+  .week-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 0 2px 6px; font-size: 14px; color: var(--muted);
   }
-  .report-title { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-  .report-title span { font-size: 13px; color: var(--muted); }
-  .report dl { margin: 0; }
-  .report .line { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; border-top: 1px solid var(--line); }
-  .report .line:first-child { border-top: 0; }
-  .report .line dt { color: var(--muted); }
-  .report .line dd { margin: 0; font-weight: 600; }
-  .report .minus dd { color: var(--red); }
-  .report .net dt { color: var(--ink); font-weight: 600; }
-  .report .net dd { font-size: 18px; }
-  .report .net.neg dd { color: var(--red); }
-  .payday { margin-top: 8px; font-size: 13px; background: #fff7cc; border-radius: 6px; padding: 6px 8px; }
-
+  .week-head b { color: var(--ink); font-size: 15px; }
   .entry {
     background: var(--panel);
     border: 1px solid var(--line);
@@ -132,7 +105,7 @@
   .pay { font-weight: 700; font-size: 18px; }
   .bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0 8px; background: var(--line); }
   .bar span { display: block; height: 100%; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 12px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--muted); }
   .chip { display: inline-flex; align-items: center; gap: 5px; }
   .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
   .entry-actions { display: flex; gap: 6px; margin-top: 10px; }
@@ -142,6 +115,7 @@
   details { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
   summary { cursor: pointer; padding: 14px; font-weight: 600; font-size: 16px; }
   .settings-body { padding: 0 14px 14px; }
+  .settings-body .hint { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
   .settings-body h3 { font-size: 14px; margin: 14px 0 6px; }
   .assume { font-size: 13px; color: var(--muted); margin: 8px 0 0; padding-left: 18px; }
   .assume li { margin-bottom: 4px; }
@@ -155,11 +129,9 @@
   <section class="summary" aria-live="polite">
     <div class="label">Razem brutto</div>
     <div class="total" id="sumPay">€0,00</div>
-    <div class="lines">
-      <div><span>Godziny płatne</span><b id="sumHours">0 h</b></div>
-      <div><span id="sumShiftsLabel">Zmiany</span><b id="sumShifts">0</b></div>
-      <div><span>Zakwaterowanie</span><b id="sumAcc">€0,00</b></div>
-      <div class="net"><span>Po odliczeniu zakwaterowania</span><b id="sumNet">€0,00</b></div>
+    <div class="sub">
+      <span id="sumHours">0 h</span>
+      <span id="sumShifts">0 zmian</span>
     </div>
   </section>
 
@@ -175,13 +147,10 @@
       <label>Koniec
         <input type="time" id="fEnd" value="23:30">
       </label>
+      <label class="wide">Przerwa niepłatna (min)
+        <input type="number" id="fBreak" min="0" step="5" inputmode="numeric">
+      </label>
     </div>
-
-    <div class="breaks-title">Przerwy niepłatne</div>
-    <div id="breakRows"></div>
-    <button class="ghost small" id="btnAddBreak" type="button">+ Dodaj przerwę</button>
-    <p class="hint">Wpisz godzinę rozpoczęcia przerwy, jeśli ją znasz. Przerwa bez godziny jest rozłożona równo na całą zmianę.</p>
-
     <div class="preview" id="preview"></div>
     <div class="actions">
       <button class="primary" id="btnSave">Dodaj zmianę</button>
@@ -192,14 +161,11 @@
   <div id="weeks"></div>
 
   <details>
-    <summary>Ustawienia</summary>
+    <summary>Ustawienia stawek</summary>
     <div class="settings-body">
       <div class="grid">
-        <label>Stawka bazowa (€/h)
+        <label class="wide">Stawka bazowa (€/h)
           <input type="number" step="0.01" min="0" inputmode="decimal" data-key="base">
-        </label>
-        <label>Zakwaterowanie (€/tydzień)
-          <input type="number" step="1" min="0" inputmode="decimal" data-key="accommodation">
         </label>
       </div>
 
@@ -228,7 +194,7 @@
         </label>
       </div>
 
-      <h3>Nadgodziny</h3>
+      <h3>Kiedy zaczynają się nadgodziny</h3>
       <div class="grid">
         <label>Po ilu płatnych godzinach dziennie
           <input type="number" step="0.25" min="0" inputmode="decimal" data-key="dailyOT">
@@ -239,31 +205,20 @@
       </div>
       <p class="hint">Wpisz 0, żeby wyłączyć dany próg.</p>
 
-      <h3>Wypłata</h3>
+      <h3>Domyślna przerwa</h3>
       <div class="grid">
-        <label class="wide">Za który tydzień pracy jest wypłata w czwartek
-          <select data-key="payWeekOffset">
-            <option value="1">Za poprzedni tydzień (pon.–niedz. przed tym czwartkiem)</option>
-            <option value="0">Za bieżący tydzień (pon.–niedz. z tym czwartkiem)</option>
-          </select>
-        </label>
-      </div>
-
-      <h3>Domyślne przerwy przy nowej zmianie</h3>
-      <div class="grid">
-        <label class="wide">Minuty, oddzielone przecinkami
-          <input type="text" inputmode="text" data-key="defBreaks" data-type="text" placeholder="np. 15, 30">
+        <label class="wide">Minuty niepłatnej przerwy na zmianę
+          <input type="number" step="5" min="0" inputmode="numeric" data-key="breakMin">
         </label>
       </div>
 
       <h3>Przyjęte założenia</h3>
       <ul class="assume">
-        <li>Potwierdzone: nadgodziny od 8. płatnej godziny w ciągu dnia, sobota i niedziela zastępują stawki godzinowe, przerwy są niepłatne, kwoty są brutto.</li>
-        <li>Zakwaterowanie jest odliczane za każdy tydzień, w którym jest wpisana przynajmniej jedna zmiana.</li>
-        <li>Tydzień to poniedziałek–niedziela. Dzień wypłaty w raporcie zależy od ustawienia „Za który tydzień pracy”.</li>
+        <li>Potwierdzone: nadgodziny od 8. godziny (tu liczonej jako płatna, po odjęciu przerw), sobota i niedziela zastępują stawki godzinowe, przerwy są niepłatne, kwoty są brutto.</li>
+        <li>Nie wiadomo, gdzie dokładnie wypada przerwa, więc jest rozłożona równo na całą zmianę.</li>
         <li>Do potwierdzenia: stawka za godziny 00:00–07:00 w dni robocze (tymczasowo 125%).</li>
         <li>Do potwierdzenia: nadgodzina jest płatna według wyższej z dwóch stawek, 130% albo tej z danej pory.</li>
-        <li>Kwoty nie uwzględniają podatków i składek, więc „po odliczeniu” to nie jest kwota netto na konto.</li>
+        <li>Kwoty nie uwzględniają podatków i składek.</li>
       </ul>
 
       <div class="actions">
@@ -286,21 +241,23 @@
 <script>
 const DEFAULT_SETTINGS = {
   base: 14.99,
-  accommodation: 160,
   r_day: 100, r_e1: 112.5, r_e2: 125, r_night: 125,
   r_sat: 150, r_sun: 200, r_ot: 130,
   dailyOT: 8, weeklyOT: 0,
-  payWeekOffset: 1,
-  defBreaks: '15, 30'
+  breakMin: 0
 };
 
-const SAMPLE = [];
+const SAMPLE = [
+  { id: 1, date: '2026-09-30', start: '15:30', end: '23:30', brk: 60 },
+  { id: 2, date: '2026-10-01', start: '16:00', end: '23:30', brk: 45 },
+  { id: 3, date: '2026-10-02', start: '16:00', end: '23:30', brk: 45 }
+];
 
-let state = { settings: { ...DEFAULT_SETTINGS }, entries: [], nextId: 1 };
+let state = { settings: { ...DEFAULT_SETTINGS }, entries: [], nextId: 4 };
 let editingId = null;
 
 /* ---------- storage: Claude's artifact storage if present, otherwise the browser's localStorage ---------- */
-const STORE_KEY = 'godziny-dhl:v2';
+const STORE_KEY = 'godziny-dhl:v1';
 async function readRaw() {
   if (window.storage && typeof window.storage.get === 'function') {
     const r = await window.storage.get(STORE_KEY);
@@ -315,22 +272,11 @@ async function writeRaw(text) {
     window.localStorage.setItem(STORE_KEY, text);
   }
 }
-function parseDefBreaks(str) {
-  return String(str || '').split(/[,;\s]+/).map(x => parseInt(x, 10)).filter(x => x > 0).map(m => ({ t: '', m }));
-}
 function applySaved(saved) {
-  const settings = { ...DEFAULT_SETTINGS, ...(saved.settings || {}) };
-  const entries = (saved.entries || []).map(e => {
-    const out = { id: e.id, date: e.date, start: e.start, end: e.end };
-    if (Array.isArray(e.breaks)) out.breaks = e.breaks;
-    else if (e.brk > 0) out.breaks = [{ t: '', m: e.brk }];
-    else out.breaks = e.brk == null ? parseDefBreaks(settings.defBreaks) : [];
-    return out;
-  });
   state = {
-    settings,
-    entries,
-    nextId: saved.nextId || (Math.max(0, ...entries.map(e => e.id)) + 1)
+    settings: { ...DEFAULT_SETTINGS, ...(saved.settings || {}) },
+    entries: saved.entries || [],
+    nextId: saved.nextId || (Math.max(0, ...(saved.entries || []).map(e => e.id)) + 1)
   };
 }
 async function loadState() {
@@ -385,59 +331,26 @@ function timeRate(t, s) {
   return s.r_night;
 }
 
-/*
-  Breaks are unpaid.
-  - A break with a start time removes exactly those minutes from the shift.
-  - A break without a start time has unknown position, so its minutes are
-    spread evenly over the remaining (non-break) minutes of the shift.
-*/
 function computeEntry(e, s, weekMinutesBefore) {
   const start = parseStart(e);
   const end = parseEnd(e);
   const totalMin = Math.round((end - start) / 60000);
+  const brk = e.brk == null ? s.breakMin : e.brk;
+  const paidMin = Math.max(0, totalMin - brk);
 
-  const inBreak = new Uint8Array(totalMin);
-  let unknown = 0;
-  let breakLabels = [];
-  (e.breaks || []).forEach(b => {
-    const m = Math.max(0, Math.round(Number(b.m)) || 0);
-    if (!m) return;
-    if (b.t) {
-      const [h, mi] = b.t.split(':').map(Number);
-      let bs = new Date(start.getFullYear(), start.getMonth(), start.getDate(), h, mi);
-      if (bs < start) bs = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1, h, mi);
-      const offset = Math.round((bs - start) / 60000);
-      for (let k = 0; k < m; k++) {
-        const idx = offset + k;
-        if (idx >= 0 && idx < totalMin) inBreak[idx] = 1;
-      }
-      breakLabels.push(`${b.t} (${m} min)`);
-    } else {
-      unknown += m;
-      breakLabels.push(`${m} min`);
-    }
-  });
-
-  let exact = 0;
-  for (let i = 0; i < totalMin; i++) exact += inBreak[i];
-  const workable = totalMin - exact;
-  unknown = Math.min(unknown, workable);
-  const w = workable > 0 ? (workable - unknown) / workable : 0;
-  const paidMin = workable - unknown;
-  const brkTotal = exact + unknown;
-
-  const segs = [];
+  // Break time is unpaid. Its exact position is unknown, so it is spread evenly
+  // across the shift: every minute counts for paidMin / totalMin of a paid minute.
+  const w = totalMin > 0 ? paidMin / totalMin : 0;
+  const segs = [];      // run-length list of {rate, min}
   let otMin = 0;
   let pay = 0;
-  let acc = 0;
 
   for (let i = 0; i < totalMin; i++) {
-    if (inBreak[i]) continue;
     const t = new Date(start.getTime() + i * 60000);
     let rate = timeRate(t, s);
-    acc += w;
-    const overDaily = s.dailyOT > 0 && acc > s.dailyOT * 60;
-    const overWeekly = s.weeklyOT > 0 && (weekMinutesBefore + acc) > s.weeklyOT * 60;
+    const paidSoFar = (i + 1) * w;
+    const overDaily = s.dailyOT > 0 && paidSoFar > s.dailyOT * 60;
+    const overWeekly = s.weeklyOT > 0 && (weekMinutesBefore + paidSoFar) > s.weeklyOT * 60;
     if (overDaily || overWeekly) {
       otMin += w;
       rate = Math.max(rate, s.r_ot);
@@ -451,7 +364,7 @@ function computeEntry(e, s, weekMinutesBefore) {
   const byRate = {};
   segs.forEach(g => { byRate[g.rate] = (byRate[g.rate] || 0) + g.min; });
 
-  return { start, end, totalMin, brkTotal, breakLabels, paidMin, otMin: Math.round(otMin), pay, segs, byRate };
+  return { start, end, totalMin, brk, paidMin, otMin: Math.round(otMin), pay, segs, byRate };
 }
 
 function computeAll() {
@@ -474,27 +387,33 @@ function fmtHours(min) {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 function fmtRate(r) { return (Math.round(r * 10) / 10).toString().replace('.', ',') + '%'; }
-function fmtDay(d, opts) { return d.toLocaleDateString('pl-PL', opts); }
 function rateColor(rate) {
   if (rate <= 100) return '#cfd7e2';
   const t = Math.min(1, (rate - 100) / 100);
-  const hue = 50 - 50 * t;
+  const hue = 50 - 50 * t;          // yellow -> red
   const light = 62 - 12 * t;
   return `hsl(${hue.toFixed(0)}, 92%, ${light.toFixed(0)}%)`;
-}
-function plural(n, one, few, many) {
-  if (n === 1) return one;
-  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) return few;
-  return many;
 }
 
 /* ---------- rendering ---------- */
 function render() {
   const rows = computeAll();
-  const s = state.settings;
   const weeksEl = document.getElementById('weeks');
 
-  // group by week
+  let totalPay = 0, totalMin = 0;
+  rows.forEach(({ r }) => { totalPay += r.pay; totalMin += r.paidMin; });
+  document.getElementById('sumPay').textContent = eur.format(totalPay);
+  document.getElementById('sumHours').textContent = fmtHours(totalMin);
+  const n = rows.length;
+  document.getElementById('sumShifts').textContent =
+    n === 1 ? '1 zmiana' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? `${n} zmiany` : `${n} zmian`;
+
+  if (!rows.length) {
+    weeksEl.innerHTML = '<div class="empty">Brak zmian. Dodaj pierwszą powyżej.</div>';
+    return;
+  }
+
+  // group by week, newest week first
   const groups = new Map();
   rows.forEach(row => {
     if (!groups.has(row.weekKey)) groups.set(row.weekKey, []);
@@ -502,49 +421,26 @@ function render() {
   });
   const keys = [...groups.keys()].sort((a, b) => b - a);
 
-  let totalPay = 0, totalMin = 0;
-  rows.forEach(({ r }) => { totalPay += r.pay; totalMin += r.paidMin; });
-  const totalAcc = keys.length * s.accommodation;
-  const totalNet = totalPay - totalAcc;
-
-  document.getElementById('sumPay').textContent = eur.format(totalPay);
-  document.getElementById('sumHours').textContent = fmtHours(totalMin);
-  document.getElementById('sumShiftsLabel').textContent = 'Liczba zmian';
-  document.getElementById('sumShifts').textContent = rows.length;
-  document.getElementById('sumAcc').textContent = '−' + eur.format(totalAcc);
-  document.getElementById('sumNet').textContent = eur.format(totalNet);
-
-  if (!rows.length) {
-    weeksEl.innerHTML = '<div class="empty">Brak zmian. Dodaj pierwszą powyżej.</div>';
-    return;
-  }
-
   weeksEl.innerHTML = keys.map(k => {
     const list = groups.get(k);
     const monday = new Date(k);
-    const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
-    const thursday = new Date(monday.getFullYear(), monday.getMonth(),
-      monday.getDate() + 3 + 7 * Number(s.payWeekOffset));
-    const wkPay = list.reduce((a, x) => a + x.r.pay, 0);
-    const wkMin = list.reduce((a, x) => a + x.r.paidMin, 0);
-    const wkNet = wkPay - s.accommodation;
-    const range = `${fmtDay(monday, { day: 'numeric', month: 'short' })} – ${fmtDay(sunday, { day: 'numeric', month: 'short' })}`;
-
+    const wkPay = list.reduce((s, x) => s + x.r.pay, 0);
+    const wkMin = list.reduce((s, x) => s + x.r.paidMin, 0);
     const entries = [...list].reverse().map(({ e, r }) => {
-      const day = fmtDay(r.start, { weekday: 'long', day: 'numeric', month: 'short' });
+      const day = r.start.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'short' });
       const wknd = [0, 6].includes(r.start.getDay());
       const bar = r.segs.map(g =>
         `<span style="flex:${g.min};background:${rateColor(g.rate)}" title="${fmtRate(g.rate)}"></span>`).join('');
       const chips = Object.keys(r.byRate).map(Number).sort((a, b) => a - b).map(rate =>
         `<span class="chip"><i class="dot" style="background:${rateColor(rate)}"></i>${fmtHours(r.byRate[rate])} × ${fmtRate(rate)}</span>`).join('');
       const ot = r.otMin ? `<span class="chip">w tym nadgodziny: ${fmtHours(r.otMin)}</span>` : '';
-      const brk = r.brkTotal ? `<span class="chip">przerwy: ${r.breakLabels.join(', ')}</span>` : '';
+      const brk = r.brk ? `<span class="chip">przerwa ${r.brk} min</span>` : '';
       return `
         <article class="entry ${wknd ? 'weekend' : ''}">
           <div class="row">
             <div>
               <div class="day">${day}</div>
-              <div class="times">${e.start}–${e.end} · ${fmtHours(r.paidMin)} płatnych</div>
+              <div class="times">${e.start}–${e.end} · ${fmtHours(r.paidMin)}</div>
             </div>
             <div class="pay">${eur.format(r.pay)}</div>
           </div>
@@ -556,59 +452,33 @@ function render() {
           </div>
         </article>`;
     }).join('');
-
     return `
       <section class="week">
-        <div class="report">
-          <div class="report-title"><b>Tydzień ${isoWeekNumber(monday)}</b><span>${range}</span></div>
-          <dl>
-            <div class="line"><dt>Zmiany</dt><dd>${list.length}</dd></div>
-            <div class="line"><dt>Godziny płatne</dt><dd>${fmtHours(wkMin)}</dd></div>
-            <div class="line"><dt>Brutto</dt><dd>${eur.format(wkPay)}</dd></div>
-            <div class="line minus"><dt>Zakwaterowanie</dt><dd>−${eur.format(s.accommodation)}</dd></div>
-            <div class="line net ${wkNet < 0 ? 'neg' : ''}"><dt>Po odliczeniu</dt><dd>${eur.format(wkNet)}</dd></div>
-          </dl>
-          <div class="payday">Wypłata: ${fmtDay(thursday, { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+        <div class="week-head">
+          <span><b>Tydzień ${isoWeekNumber(monday)}</b></span>
+          <span>${fmtHours(wkMin)} · <b>${eur.format(wkPay)}</b></span>
         </div>
         ${entries}
       </section>`;
   }).join('');
 }
 
-/* ---------- form ---------- */
-function addBreakRow(t = '', m = '') {
-  const row = document.createElement('div');
-  row.className = 'break-row';
-  row.innerHTML = `
-    <label>Od (opcjonalnie)<input type="time" data-b="t" value="${t}"></label>
-    <label>Minut<input type="number" data-b="m" min="1" step="1" inputmode="numeric" value="${m}"></label>
-    <button class="ghost" type="button" data-rmbreak aria-label="Usuń przerwę">×</button>`;
-  document.getElementById('breakRows').appendChild(row);
-}
-function getBreaks() {
-  return [...document.querySelectorAll('#breakRows .break-row')].map(row => ({
-    t: row.querySelector('[data-b="t"]').value || '',
-    m: parseInt(row.querySelector('[data-b="m"]').value, 10) || 0
-  })).filter(b => b.m > 0);
-}
-function setBreakRows(list) {
-  document.getElementById('breakRows').innerHTML = '';
-  list.forEach(b => addBreakRow(b.t, b.m));
-}
 function currentFormEntry() {
   const date = document.getElementById('fDate').value;
   const start = document.getElementById('fStart').value;
   const end = document.getElementById('fEnd').value;
+  const brkRaw = document.getElementById('fBreak').value;
   if (!date || !start || !end) return null;
-  return { date, start, end, breaks: getBreaks() };
+  return { date, start, end, brk: brkRaw === '' ? null : Math.max(0, parseInt(brkRaw, 10) || 0) };
 }
 function updatePreview() {
   const el = document.getElementById('preview');
   const f = currentFormEntry();
   if (!f) { el.textContent = ''; return; }
   const r = computeEntry(f, state.settings, 0);
-  el.innerHTML = `Ta zmiana: <strong>${fmtHours(r.paidMin)}</strong> płatnych → <strong>${eur.format(r.pay)}</strong> brutto`;
+  el.innerHTML = `Ta zmiana: <strong>${fmtHours(r.paidMin)}</strong> → <strong>${eur.format(r.pay)}</strong> brutto`;
 }
+
 function resetForm() {
   editingId = null;
   const today = new Date();
@@ -616,12 +486,14 @@ function resetForm() {
   document.getElementById('fDate').value = iso;
   document.getElementById('fStart').value = '16:00';
   document.getElementById('fEnd').value = '23:30';
-  setBreakRows(parseDefBreaks(state.settings.defBreaks));
+  document.getElementById('fBreak').value = '';
+  document.getElementById('fBreak').placeholder = `domyślnie ${state.settings.breakMin}`;
   document.getElementById('formTitle').textContent = 'Dodaj zmianę';
   document.getElementById('btnSave').textContent = 'Dodaj zmianę';
   document.getElementById('btnCancel').hidden = true;
   updatePreview();
 }
+
 function fillSettings() {
   document.querySelectorAll('[data-key]').forEach(inp => {
     inp.value = state.settings[inp.dataset.key];
@@ -629,16 +501,8 @@ function fillSettings() {
 }
 
 /* ---------- events ---------- */
-['fDate', 'fStart', 'fEnd'].forEach(id =>
+['fDate', 'fStart', 'fEnd', 'fBreak'].forEach(id =>
   document.getElementById(id).addEventListener('input', updatePreview));
-document.getElementById('breakRows').addEventListener('input', updatePreview);
-document.getElementById('breakRows').addEventListener('click', ev => {
-  if (ev.target.hasAttribute('data-rmbreak')) {
-    ev.target.closest('.break-row').remove();
-    updatePreview();
-  }
-});
-document.getElementById('btnAddBreak').addEventListener('click', () => addBreakRow());
 
 document.getElementById('btnSave').addEventListener('click', async () => {
   const f = currentFormEntry();
@@ -666,7 +530,7 @@ document.getElementById('weeks').addEventListener('click', async ev => {
     document.getElementById('fDate').value = e.date;
     document.getElementById('fStart').value = e.start;
     document.getElementById('fEnd').value = e.end;
-    setBreakRows(e.breaks || []);
+    document.getElementById('fBreak').value = e.brk == null ? '' : e.brk;
     document.getElementById('formTitle').textContent = 'Edytuj zmianę';
     document.getElementById('btnSave').textContent = 'Zapisz zmiany';
     document.getElementById('btnCancel').hidden = false;
@@ -681,20 +545,14 @@ document.getElementById('weeks').addEventListener('click', async ev => {
   }
 });
 
-async function onSettingChange(inp) {
-  if (inp.dataset.type === 'text') {
-    state.settings[inp.dataset.key] = inp.value;
-  } else {
+document.querySelectorAll('[data-key]').forEach(inp => {
+  inp.addEventListener('input', async () => {
     const v = parseFloat(inp.value);
     state.settings[inp.dataset.key] = isNaN(v) ? 0 : v;
-  }
-  await saveState();
-  updatePreview();
-  render();
-}
-document.querySelectorAll('[data-key]').forEach(inp => {
-  inp.addEventListener('input', () => onSettingChange(inp));
-  if (inp.tagName === 'SELECT') inp.addEventListener('change', () => onSettingChange(inp));
+    await saveState();
+    updatePreview();
+    render();
+  });
 });
 
 document.getElementById('btnReset').addEventListener('click', async () => {
@@ -750,8 +608,8 @@ document.getElementById('fileImport').addEventListener('change', async ev => {
 (async function init() {
   const loaded = await loadState();
   if (!loaded) {
-    state.entries = SAMPLE.map(x => ({ ...x, breaks: x.breaks.map(b => ({ ...b })) }));
-    state.nextId = 1;
+    state.entries = SAMPLE.map(x => ({ ...x }));
+    state.nextId = 4;
   }
   fillSettings();
   resetForm();
