@@ -159,8 +159,9 @@
       <div><span>Godziny płatne</span><b id="sumHours">0 h</b></div>
       <div><span id="sumShiftsLabel">Zmiany</span><b id="sumShifts">0</b></div>
       <div><span>Zakwaterowanie</span><b id="sumAcc">€0,00</b></div>
+      <div><span>Ubezpieczenie</span><b id="sumIns">€0,00</b></div>
       <div id="sumDedRow" style="display:none"><span>Składki, podatek i inne koszty</span><b id="sumDed">€0,00</b></div>
-      <div class="net"><span id="sumNetLabel">Po odliczeniu zakwaterowania</span><b id="sumNet">€0,00</b></div>
+      <div class="net"><span id="sumNetLabel">Po odliczeniu kosztów</span><b id="sumNet">€0,00</b></div>
     </div>
   </section>
 
@@ -201,6 +202,9 @@
         </label>
         <label>Zakwaterowanie (€/tydzień)
           <input type="number" step="1" min="0" inputmode="decimal" data-key="accommodation">
+        </label>
+        <label>Ubezpieczenie (€/tydzień)
+          <input type="number" step="0.01" min="0" inputmode="decimal" data-key="insurance">
         </label>
       </div>
 
@@ -277,7 +281,7 @@
       <h3>Przyjęte założenia</h3>
       <ul class="assume">
         <li>Potwierdzone: nadgodziny od 8. płatnej godziny w ciągu dnia, sobota i niedziela zastępują stawki godzinowe, przerwy są niepłatne, kwoty są brutto.</li>
-        <li>Zakwaterowanie jest odliczane za każdy tydzień, w którym jest wpisana przynajmniej jedna zmiana.</li>
+        <li>Zakwaterowanie i ubezpieczenie są odliczane za każdy tydzień, w którym jest wpisana przynajmniej jedna zmiana.</li>
         <li>Tydzień to poniedziałek–niedziela. Dzień wypłaty w raporcie zależy od ustawienia „Za który tydzień pracy”.</li>
         <li>Do potwierdzenia: stawka za godziny 00:00–07:00 w dni robocze (tymczasowo 125%).</li>
         <li>Do potwierdzenia: nadgodzina jest płatna według wyższej z dwóch stawek, 130% albo tej z danej pory.</li>
@@ -305,6 +309,7 @@
 const DEFAULT_SETTINGS = {
   base: 14.99,
   accommodation: 160,
+  insurance: 40.78,
   r_day: 100, r_e1: 112.5, r_e2: 125, r_night: 125,
   r_sat: 150, r_sun: 200, r_ot: 130,
   dailyOT: 8, weeklyOT: 0,
@@ -492,7 +497,8 @@ function calcNet(gross, s) {
   const tax = Math.max(0, gross - contrib) * (Number(s.taxPct) || 0) / 100;
   const other = Number(s.otherWeekly) || 0;
   const acc = Number(s.accommodation) || 0;
-  return { contrib, tax, other, acc, net: gross - contrib - tax - other - acc };
+  const ins = Number(s.insurance) || 0;
+  return { contrib, tax, other, acc, ins, net: gross - contrib - tax - other - acc - ins };
 }
 
 /* ---------- formatting ---------- */
@@ -533,24 +539,28 @@ function render() {
 
   let totalPay = 0, totalMin = 0;
   rows.forEach(({ r }) => { totalPay += r.pay; totalMin += r.paidMin; });
-  let totalAcc = 0, totalDed = 0, totalNet = 0;
+  let totalAcc = 0, totalIns = 0, totalDed = 0, totalTax = 0, totalNet = 0;
   keys.forEach(k => {
     const gross = groups.get(k).reduce((a, x) => a + x.r.pay, 0);
     const f = calcNet(gross, s);
     totalAcc += f.acc;
+    totalIns += f.ins;
+    totalTax += f.contrib + f.tax;
     totalDed += f.contrib + f.tax + f.other;
     totalNet += f.net;
   });
   const hasDeductions = totalDed > 0;
+  const hasTaxes = totalTax > 0;
 
   document.getElementById('sumPay').textContent = eur.format(totalPay);
   document.getElementById('sumHours').textContent = fmtHours(totalMin);
   document.getElementById('sumShiftsLabel').textContent = 'Liczba zmian';
   document.getElementById('sumShifts').textContent = rows.length;
   document.getElementById('sumAcc').textContent = '−' + eur.format(totalAcc);
+  document.getElementById('sumIns').textContent = '−' + eur.format(totalIns);
   document.getElementById('sumDedRow').style.display = hasDeductions ? '' : 'none';
   document.getElementById('sumDed').textContent = '−' + eur.format(totalDed);
-  document.getElementById('sumNetLabel').textContent = hasDeductions ? 'Na rękę (szacunek)' : 'Po odliczeniu zakwaterowania';
+  document.getElementById('sumNetLabel').textContent = hasTaxes ? 'Na rękę (szacunek)' : 'Po odliczeniu kosztów';
   document.getElementById('sumNet').textContent = eur.format(totalNet);
 
   if (!rows.length) {
@@ -567,7 +577,7 @@ function render() {
     const wkPay = list.reduce((a, x) => a + x.r.pay, 0);
     const wkMin = list.reduce((a, x) => a + x.r.paidMin, 0);
     const f = calcNet(wkPay, s);
-    const hasDed = f.contrib + f.tax + f.other > 0;
+    const hasDed = f.contrib + f.tax > 0;
     const range = `${fmtDay(monday, { day: 'numeric', month: 'short' })} – ${fmtDay(sunday, { day: 'numeric', month: 'short' })}`;
 
     const entries = [...list].reverse().map(({ e, r }) => {
@@ -609,8 +619,9 @@ function render() {
             ${f.contrib > 0 ? `<div class="line minus"><dt>Składki</dt><dd>−${eur.format(f.contrib)}</dd></div>` : ''}
             ${f.tax > 0 ? `<div class="line minus"><dt>Podatek (szac.)</dt><dd>−${eur.format(f.tax)}</dd></div>` : ''}
             <div class="line minus"><dt>Zakwaterowanie</dt><dd>−${eur.format(f.acc)}</dd></div>
+            <div class="line minus"><dt>Ubezpieczenie</dt><dd>−${eur.format(f.ins)}</dd></div>
             ${f.other > 0 ? `<div class="line minus"><dt>Inne koszty</dt><dd>−${eur.format(f.other)}</dd></div>` : ''}
-            <div class="line net ${f.net < 0 ? 'neg' : ''}"><dt>${hasDed ? 'Na rękę (szacunek)' : 'Po odliczeniu'}</dt><dd>${eur.format(f.net)}</dd></div>
+            <div class="line net ${f.net < 0 ? 'neg' : ''}"><dt>${hasDed ? 'Na rękę (szacunek)' : 'Po odliczeniu kosztów'}</dt><dd>${eur.format(f.net)}</dd></div>
           </dl>
           <div class="payday">Wypłata: ${fmtDay(thursday, { weekday: 'long', day: 'numeric', month: 'long' })}</div>
         </div>
